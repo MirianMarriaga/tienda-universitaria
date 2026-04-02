@@ -1,4 +1,4 @@
-package edu.unimagdalena.tienda_universitaria.entities.Enums;
+package edu.unimagdalena.tienda_universitaria.entities.enums;
 
 public enum OrderStatus {
     CREATED,
