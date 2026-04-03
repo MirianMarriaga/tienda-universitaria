@@ -1,4 +1,4 @@
 package edu.unimagdalena.tienda_universitaria.repositories;
 
-public class OrderStatusHistoryRepositoryTest {
+public class OrderItemRepositoryIntegrationTest {
 }
