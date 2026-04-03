@@ -20,8 +20,8 @@ public class Inventory {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name= "stock_available", nullable = false)
-    private String stockAvailable;
+    @Column(name= "available_stock", nullable = false)
+    private String availableStock;
 
     @Column(name= "minimum_stack", nullable = false)
     private String minimumStack;
