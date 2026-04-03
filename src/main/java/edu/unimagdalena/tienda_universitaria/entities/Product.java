@@ -35,4 +35,7 @@ public class Product {
 
     @Column(nullable = false)
     private Boolean active;
+
+    @OneToOne(mappedBy = "product")
+    private Inventory inventory;
 }
