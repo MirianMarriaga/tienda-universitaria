@@ -40,8 +40,10 @@ public class Customer {
     private Instant updatedAt;
 
     @OneToMany(mappedBy = "customer")
+    @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer")
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 }
