@@ -3,6 +3,9 @@ package edu.unimagdalena.tienda_universitaria.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "addresses")
 @NoArgsConstructor
@@ -31,5 +34,9 @@ public class Address {
 
     @Column(nullable = false)
     private String country;
+
+    @OneToMany(mappedBy = "address")
+    @Builder.Default
+    private List<Order> orders = new ArrayList<>();
 
 }
