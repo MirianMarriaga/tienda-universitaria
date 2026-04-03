@@ -1,4 +1,8 @@
 package edu.unimagdalena.tienda_universitaria.repositories;
 
-public interface AddressRepository {
+import edu.unimagdalena.tienda_universitaria.entities.Address;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AddressRepository extends JpaRepository<Address, Long> {
+
 }
