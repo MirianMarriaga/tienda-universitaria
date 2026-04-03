@@ -23,6 +23,9 @@ public class Customer {
     @Column(name= "full_name", nullable = false)
     private String fullName;
 
+    @Column(name = "identification_number", nullable = false, unique = true)
+    private String identificationNumber;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
