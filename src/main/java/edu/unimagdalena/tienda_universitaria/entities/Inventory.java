@@ -3,6 +3,8 @@ package edu.unimagdalena.tienda_universitaria.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "inventories")
 @NoArgsConstructor
@@ -21,8 +23,11 @@ public class Inventory {
     private Product product;
 
     @Column(name= "available_stock", nullable = false)
-    private String availableStock;
+    private Integer availableStock;
 
-    @Column(name= "minimum_stack", nullable = false)
-    private String minimumStack;
+    @Column(name= "minimum_stock", nullable = false)
+    private Integer minimumStock;
+
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
 }

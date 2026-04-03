@@ -4,6 +4,8 @@ import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "order_status_histories")
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class OrderStatusHistory {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -26,5 +28,5 @@ public class OrderStatusHistory {
     private OrderStatus status;
 
     @Column(name = "changed_at", nullable = false)
-    private OrderStatus changedAAt;
+    private Instant changedAt;
 }

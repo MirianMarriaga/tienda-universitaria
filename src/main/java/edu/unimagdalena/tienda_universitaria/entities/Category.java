@@ -3,6 +3,7 @@ package edu.unimagdalena.tienda_universitaria.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +25,10 @@ public class Category {
 
     private String description;
 
-    @OneToMany(mappedBy = "category")
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Product> products = new HashSet<>();
 }
