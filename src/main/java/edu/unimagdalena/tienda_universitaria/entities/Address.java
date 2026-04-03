@@ -3,6 +3,7 @@ package edu.unimagdalena.tienda_universitaria.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
@@ -34,6 +35,9 @@ public class Address {
 
     @Column(nullable = false)
     private String country;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "address")
     @Builder.Default

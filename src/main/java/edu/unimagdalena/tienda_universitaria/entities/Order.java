@@ -23,12 +23,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
     @Enumerated(EnumType.STRING)
@@ -44,11 +44,11 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @Builder.Default
     private List<OrderStatusHistory> statusHistory = new ArrayList<>();
 }
