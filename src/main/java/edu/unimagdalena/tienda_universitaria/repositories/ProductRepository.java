@@ -11,5 +11,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByCategoryIdAndActiveTrue(Long categoryId);
 
-    List<Product> findByInventoryAvailableStockLessThan(Integer stock);
+    List<Product> findByOrder_IdOrderByChangedAtAsc();
 }
