@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -38,4 +39,8 @@ public class Product {
 
     @OneToOne(mappedBy = "product")
     private Inventory inventory;
+
+    @OneToMany(mappedBy = "product")
+    @Builder.Default
+    private List<OrderItem> orderItems;
 }
