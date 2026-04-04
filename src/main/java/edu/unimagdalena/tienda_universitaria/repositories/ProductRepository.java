@@ -19,7 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByInventory_AvailableStockLessThan(Integer stock);
 
     @Query("""
-            SELECT p.id, p.name, SUM(io.quantity)
+            SELECT p.id, p.name, SUM(oi.quantity)
             FROM OrderItem oi
             JOIN oi.product p
             JOIN oi.order o
