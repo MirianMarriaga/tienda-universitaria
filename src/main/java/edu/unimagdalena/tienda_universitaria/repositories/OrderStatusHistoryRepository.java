@@ -8,6 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface OrderStatusHistoryRepository  extends JpaRepository<OrderStatusHistory, Long> {
+
+    List<OrderStatusHistory> findByOrder_IdOrderByChangedAtAsc(Long orderId);
+
     @Query("""
             SELECT h
             FROM OrderStatusHistory h
@@ -18,4 +21,5 @@ public interface OrderStatusHistoryRepository  extends JpaRepository<OrderStatus
     List<OrderStatusHistory> findHistoryByOrdenId(
             @Param("orderId") Long orderId
     );
+
 }

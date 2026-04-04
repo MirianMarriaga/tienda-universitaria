@@ -7,11 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
+import edu.unimagdalena.tienda_universitaria.entities.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findBySku(String sku);
+    List<Product> findByCategory_IdAndActiveTrue(Long categoryId);
+    List<Product> findByInventory_AvailableStockLessThan(Integer stock);
+
     List<Product> findByCategoryIdAndActiveTrue(Long categoryId);
     @Query("""
             SELECT p.id, p.name, SUM(io.quantity)
@@ -36,5 +42,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             ORDER BY i.availableStock ASC
             """)
     List<Object[]> findByProductsInsufficientStock();
+
 }
 

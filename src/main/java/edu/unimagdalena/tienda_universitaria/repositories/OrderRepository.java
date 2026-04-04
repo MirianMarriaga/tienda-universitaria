@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findByCustomerIdOrder(Long customerId);
+
+    List<Order> findByStatus(OrderStatus orderStatus);
+    List<Order> findByCustomer_Id(Long customerId);
     @Query("""
             SELECT o 
             FROM Order o
@@ -45,4 +47,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                 EXTRACT(MONTH FROM o.createdAt)                    
             """)
     List<Object[]> findByMonthlyRevenue();
+
 }
