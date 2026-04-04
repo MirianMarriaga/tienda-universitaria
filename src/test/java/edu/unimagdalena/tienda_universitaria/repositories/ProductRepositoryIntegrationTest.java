@@ -25,20 +25,20 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
     InventoryRepository inventoryRepo;
 
     @Test
-    @DisplayName("Product: Busca por categoria")
+    @DisplayName("Product: Search by category")
     void shouldFindByCategory_IdAndActiveTrue(){
         // Given
-        var categoria = categoryRepo.save(Category.builder()
-                .name("Libro")
-                .description("Libros académicos")
+        var category = categoryRepo.save(Category.builder()
+                .name("Books")
+                .description("Academic books")
                 .createdAt(Instant.now())
                 .build());
 
         productRepo.save(Product.builder()
-                .sku("LIB-ING-ALG-2ED-045")
-                .category(categoria)
-                .name("Álgebra para Ingenieria")
-                .description("Libro de álgebra")
+                .sku("BOOK-ENG-ALG-2ED-045")
+                .category(category)
+                .name("Engineering Algebra")
+                .description("Algebra book")
                 .price(BigDecimal.valueOf(45000))
                 .active(true)
                 .createdAt(Instant.now())
@@ -46,76 +46,78 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .build());
 
         productRepo.save(Product.builder()
-                .sku("LIB-ING-CAL-7ED-005")
-                .category(categoria)
-                .name("Cálculo Diferencial")
-                .description("Libro de cálculo")
+                .sku("BOOK-ENG-CAL-7ED-005")
+                .category(category)
+                .name("Differential Calculus")
+                .description("Calculus book")
                 .price(BigDecimal.valueOf(48000))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
         // When
-        List<Product> resultado = productRepo.findByCategory_IdAndActiveTrue(categoria.getId());
+        List<Product> result = productRepo.findByCategory_IdAndActiveTrue(category.getId());
 
         // Then
-        assertThat(resultado).isNotEmpty();
-        assertThat(resultado).hasSize(1);
-        assertThat(resultado.get(0).getActive()).isTrue();
-        assertThat(resultado.get(0).getCategory().getId())
-                .isEqualTo(categoria.getId());
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getActive()).isTrue();
+        assertThat(result.get(0).getCategory().getId())
+                .isEqualTo(category.getId());
     }
 
     @Test
-    @DisplayName("Product")
+    @DisplayName("Product: Search by low stock")
     void findByInventory_AvailableStockLessThan(){
         //Given
-        var categoria = categoryRepo.save(Category.builder()
-                .name("Libro")
-                .description("Libros académicos")
+        var category = categoryRepo.save(Category.builder()
+                .name("Books")
+                .description("Academic books")
                 .createdAt(Instant.now())
                 .build());
 
-        var producto1 = productRepo.save(Product.builder()
-                .sku("LIB-ING-ALG-2ED-045")
-                .category(categoria)
-                .name("Álgebra para Ingenieria")
-                .description("Libro de álgebra")
+        var product1 = productRepo.save(Product.builder()
+                .sku("BOOK-ENG-ALG-2ED-045")
+                .category(category)
+                .name("Engineering Algebra")
+                .description("Algebra book")
                 .price(BigDecimal.valueOf(45000))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
 
-        var producto2 = productRepo.save(Product.builder()
-                .sku("LIB-ING-CAL-7ED-005")
-                .category(categoria)
-                .name("Cálculo Diferencial")
-                .description("Libro de cálculo")
+        var product2 = productRepo.save(Product.builder()
+                .sku("BOOK-ENG-CAL-7ED-005")
+                .category(category)
+                .name("Differential Calculus")
+                .description("Calculus book")
                 .price(BigDecimal.valueOf(48000))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
 
+
         var inventory1 = inventoryRepo.save(Inventory.builder()
-                .product(producto1)
+                .product(product1)
                 .availableStock(3)
                 .minimumStock(5)
                 .updatedAt(Instant.now())
                 .build());
 
         var inventory2 = inventoryRepo.save(Inventory.builder()
-                .product(producto2)
+                .product(product2)
                 .availableStock(3)
                 .minimumStock(5)
                 .updatedAt(Instant.now())
                 .build());
-        //When
-        List<Product> resultado = productRepo.findByInventory_AvailableStockLessThan(5); //minimumStock
 
-        //Then
-        assertThat(resultado).isNotEmpty();
-        assertThat(resultado).hasSize(2);
+        // When
+        List<Product> result = productRepo.findByInventory_AvailableStockLessThan(5);
+
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(2);
     }
 }
