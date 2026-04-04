@@ -24,7 +24,7 @@ public class Customer {
     private String fullName;
 
     @Column(name = "identification_number", nullable = false, unique = true)
-    private Long identificationNumber;
+    private String identificationNumber;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
