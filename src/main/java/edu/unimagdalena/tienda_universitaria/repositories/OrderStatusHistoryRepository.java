@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface OrderStatusHistoryRepository  extends JpaRepository<OrderStatusHistory, Long> {
 
-    List<OrderStatusHistory> findByOrder_IdOrderByChangedAtAsc(Long orderId);
-
     @Query("""
             SELECT h
             FROM OrderStatusHistory h
