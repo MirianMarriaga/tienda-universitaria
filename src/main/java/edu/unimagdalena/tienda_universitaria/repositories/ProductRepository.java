@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findBySku(String sku);
 
-    List<Product> findByCategoryIdAndActiveTrue(Long categoryId);
+    List<Product> findByCategory_IdAndActiveTrue(Long categoryId);
 
-    List<Product> findByOrder_IdOrderByChangedAtAsc();
+    List<Product> findByInventory_AvailableStockLessThan(Integer stock);
 }
