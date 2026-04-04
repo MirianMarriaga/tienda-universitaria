@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +24,45 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
 
     @Autowired
     InventoryRepository inventoryRepo;
+
+    @Test
+    @DisplayName("Product: Search by SKU")
+    void shouldFindBySku(){
+        // Given
+        var category = categoryRepo.save(Category.builder()
+                .name("Books")
+                .description("Academic books")
+                .createdAt(Instant.now())
+                .build());
+
+        productRepo.save(Product.builder()
+                .sku("BOOK-ENG-ALG-2ED-045")
+                .category(category)
+                .name("Engineering Algebra")
+                .description("Algebra book")
+                .price(BigDecimal.valueOf(45000))
+                .active(true)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        productRepo.save(Product.builder()
+                .sku("BOOK-ENG-CAL-7ED-005")
+                .category(category)
+                .name("Differential Calculus")
+                .description("Calculus book")
+                .price(BigDecimal.valueOf(48000))
+                .active(false)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+        //When
+        Optional<Product> result = productRepo.findBySku("BOOK-ENG-ALG-2ED-045");
+
+        //Then
+        assertThat(result).isPresent();
+        assertThat(result.get().getSku()).isEqualTo("BOOK-ENG-ALG-2ED-045");
+    }
 
     @Test
     @DisplayName("Product: Search by category")
