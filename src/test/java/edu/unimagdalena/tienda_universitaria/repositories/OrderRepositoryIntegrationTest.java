@@ -27,8 +27,61 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
 
 
     @Test
+    @DisplayName("Order: Search by status")
+    void shouldFindByStatus() {
+        //Given
+        var customer = customerRepo.save(Customer.builder()
+                .fullName("Juan Amador Hernandez")
+                .identificationNumber("1001234567")
+                .email("jahernandez@unimagdalena.edu.co")
+                .phone("+57 310 456 7821")
+                .status(CustomerStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        var address = addressRepo.save(Address.builder()
+                .customer(customer)
+                .street("Calle 22 #5-30")
+                .city("Santa Marta")
+                .state("Magdalena")
+                .country("Colombia")
+                .createdAt(Instant.now())
+                .build());
+
+        var order1 = orderRepo.save(Order.builder()
+                .customer(customer)
+                .address(address)
+                .status(OrderStatus.SHIPPED)
+                .total(BigDecimal.valueOf(48000.00))
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        var order2 = orderRepo.save(Order.builder()
+                .customer(customer)
+                .address(address)
+                .status(OrderStatus.DELIVERED)
+                .total(BigDecimal.valueOf(45000.00))
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        //When
+        List<Order> result = orderRepo.findByStatus(OrderStatus.DELIVERED);
+
+        //Then
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getStatus()).isEqualTo(OrderStatus.DELIVERED);
+        assertThat(result.get(0).getId()).isEqualTo(order2.getId());
+
+
+    }
+
+
+    @Test
     @DisplayName("Order: Search by customerId")
-    void findByCustomer_Id(){
+    void findByCustomer_Id() {
         //Given
         var customer1 = customerRepo.save(Customer.builder()
                 .fullName("Angelica Villegas")
@@ -68,7 +121,6 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
                 .createdAt(Instant.now())
                 .build());
 
-
         orderRepo.save(Order.builder()
                 .customer(customer1)
                 .address(address1)
@@ -94,7 +146,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
 
     @Test
     @DisplayName("Order: Search order by filters")
-    void findOrdersByFilters(){
+    void findOrdersByFilters() {
         //Given
         var customer1 = customerRepo.save(Customer.builder()
                 .fullName("Angelica Villegas")
@@ -166,7 +218,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
 
     @Test
     @DisplayName("Order: Search by monthly revenue")
-    void findByMonthlyRevenue(){
+    void findByMonthlyRevenue() {
         //Given
         var customer1 = customerRepo.save(Customer.builder()
                 .fullName("Angelica Villegas")
@@ -238,6 +290,5 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
         BigDecimal monthTotal = (BigDecimal) result.get(0)[2];
         assertThat(monthTotal).isEqualByComparingTo(new BigDecimal("211000.00"));
 
-        }
-
+    }
 }
