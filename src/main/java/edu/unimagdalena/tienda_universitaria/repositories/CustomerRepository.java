@@ -21,7 +21,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             FROM Order o
             WHERE o.status <> 'CANCELLED'
             GROUP BY o.customer.id, o.customer.fullName
-            ORDER BEY SUM(o.total) DESC
+            ORDER BY SUM(o.total) DESC
             """)
     List<Object[]> findTopByCustomer();
 }

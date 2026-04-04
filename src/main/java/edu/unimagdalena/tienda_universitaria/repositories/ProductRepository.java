@@ -18,7 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategory_IdAndActiveTrue(Long categoryId);
     List<Product> findByInventory_AvailableStockLessThan(Integer stock);
 
-    List<Product> findByCategoryIdAndActiveTrue(Long categoryId);
     @Query("""
             SELECT p.id, p.name, SUM(io.quantity)
             FROM OrderItem oi
@@ -26,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             JOIN oi.order o
             WHERE o.createdAt >= :start
             AND o.createdAt <= :end
-            GROUP BY p.id, p,name
+            GROUP BY p.id, p.name
             ORDER BY SUM(oi.quantity) DESC
             """)
     List<Object[]> findProductsBestSoldByPeriod(
