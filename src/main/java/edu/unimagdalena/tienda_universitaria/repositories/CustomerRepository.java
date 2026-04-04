@@ -12,5 +12,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     List<Customer> findByStatus(CustomerStatus status);
 
-    Optional<Customer> findByIdentificationNumber(Long identificationNumber);
+    Optional<Customer> findByIdentificationNumber(String identificationNumber);
 }

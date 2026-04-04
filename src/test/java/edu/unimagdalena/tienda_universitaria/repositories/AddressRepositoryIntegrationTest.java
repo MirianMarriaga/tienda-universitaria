@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AddressRepositoryIntegrationTest extends AbstractRepositoryIT{
+class AddressRepositoryIntegrationTest extends AbstractRepositoryIT{
 
     @Autowired
     AddressRepository addressRepo;
