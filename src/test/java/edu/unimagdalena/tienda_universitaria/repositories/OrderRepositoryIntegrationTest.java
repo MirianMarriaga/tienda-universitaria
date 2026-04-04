@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,7 +52,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT{
                         .customer(customer)
                         .address(address)
                         .status(OrderStatus.SHIPPED)
-                        .total(BigDecimal.valueOf(48000))
+                        .total(BigDecimal.valueOf(48000.00))
                         .createdAt(Instant.now())
                         .updatedAt(Instant.now())
                         .build());
@@ -62,7 +61,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .customer(customer)
                 .address(address)
                 .status(OrderStatus.DELIVERED)
-                .total(BigDecimal.valueOf(45000))
+                .total(BigDecimal.valueOf(45000.00))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
@@ -122,7 +121,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .customer(customer1)
                 .address(address1)
                 .status(OrderStatus.SHIPPED)
-                .total(BigDecimal.valueOf(48000))
+                .total(BigDecimal.valueOf(48000.00))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
@@ -131,7 +130,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .customer(customer2)
                 .address(address2)
                 .status(OrderStatus.DELIVERED)
-                .total(BigDecimal.valueOf(45000))
+                .total(BigDecimal.valueOf(45000.00))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
