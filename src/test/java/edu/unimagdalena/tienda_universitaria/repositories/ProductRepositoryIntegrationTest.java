@@ -1,6 +1,7 @@
 package edu.unimagdalena.tienda_universitaria.repositories;
 
 import edu.unimagdalena.tienda_universitaria.entities.*;
+import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,12 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
 
     @Autowired
     OrderItemRepository orderItemRepo;
+
+    @Autowired
+    CustomerRepository customerRepo;
+
+    @Autowired
+    AddressRepository addressRepo;
 
 
     @Test
@@ -85,7 +92,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -96,7 +103,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -127,7 +134,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -138,7 +145,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -182,7 +189,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -193,16 +200,36 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
 
+        var customer1 = customerRepo.save(Customer.builder()
+                .fullName("Angelica Villegas")
+                .email("angelicamvg@gmail.com")
+                .identificationNumber("1001234567")
+                .phone("+57 311 254 3939")
+                .status(CustomerStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        var address = addressRepo.save(Address.builder()
+                .customer(customer1)
+                .street("Mz G casa 6 Barrio Santa Cruz")
+                .city("Santa Marta")
+                .state("Magdalena")
+                .country("Colombia")
+                .createdAt(Instant.now())
+                .build());
 
         var order = orderRepo.save(Order.builder()
+                .customer(customer1)
+                .address(address)
                 .status(OrderStatus.PAID)
-                .total(new BigDecimal("550000"))
+                .total(new BigDecimal("550000.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
@@ -211,8 +238,8 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .order(order)
                 .product(product1)
                 .quantity(1)
-                .unitPrice(new BigDecimal(250000))
-                .subtotal(new BigDecimal(250000))
+                .unitPrice(new BigDecimal(250000.00))
+                .subtotal(new BigDecimal(250000.00))
                 .createdAt(Instant.now())
                 .build());
 
@@ -220,8 +247,8 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .order(order)
                 .product(product2)
                 .quantity(2)
-                .unitPrice(new BigDecimal(150000))
-                .subtotal(new BigDecimal(300000))
+                .unitPrice(new BigDecimal(150000.00))
+                .subtotal(new BigDecimal(300000.00))
                 .createdAt(Instant.now())
                 .build());
 
