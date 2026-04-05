@@ -25,11 +25,13 @@ public class OrderDtos {
 
     public record OrderItemResponse(
             Long id,
+            Long orderId,
             Long productId,
             String productName,
             Integer quantity,
             BigDecimal unitPrice,
-            BigDecimal subTotal
+            BigDecimal subTotal,
+            Instant createdAt
     ) implements Serializable {}
 
     public record OrderResponse(

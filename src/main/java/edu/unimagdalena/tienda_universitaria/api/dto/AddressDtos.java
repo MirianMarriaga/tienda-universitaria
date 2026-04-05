@@ -21,7 +21,6 @@ public class AddressDtos {
             String city,
             String state,
             String country,
-            Instant createdAt,
-            Instant updatedAt
+            Instant createdAt
     ) implements Serializable {}
 }
