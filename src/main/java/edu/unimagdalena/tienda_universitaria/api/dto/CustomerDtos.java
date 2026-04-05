@@ -3,6 +3,7 @@ package edu.unimagdalena.tienda_universitaria.api.dto;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public class CustomerDtos {
@@ -32,4 +33,6 @@ public class CustomerDtos {
             Instant createdAt,
             Instant updatedAt
     ) implements Serializable {}
+
+
 }
