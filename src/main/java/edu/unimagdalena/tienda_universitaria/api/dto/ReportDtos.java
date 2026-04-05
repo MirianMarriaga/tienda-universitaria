@@ -13,7 +13,7 @@ public class ReportDtos {
 
     public record MonthlyIncomeResponse(
             Integer year,
-            Integer mont,
+            Integer month,
             BigDecimal totalIncome
     ) implements Serializable {}
 
