@@ -264,8 +264,9 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
     }
 
     @Test
-    @DisplayName("Product: Search product with insufficient stock")
+    @DisplayName("Product: Search product with insufficient stock ")
     void findByProductsInsufficientStock() {
+
         //Given
         var category = categoryRepo.save(Category.builder()
                 .name("Books")
@@ -315,5 +316,6 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
         assertThat((String) result.get(0)[1]).isEqualTo("Engineering Algebra");
         assertThat((Integer) result.get(0)[2]).isEqualTo(2);
         assertThat((Integer) result.get(0)[3]).isEqualTo(10);
+
     }
 }
