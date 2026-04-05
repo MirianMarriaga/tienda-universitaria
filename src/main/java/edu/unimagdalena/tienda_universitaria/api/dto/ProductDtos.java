@@ -34,12 +34,6 @@ public class ProductDtos {
             Instant updatedAt
     ) implements Serializable {}
 
-    public record LowStockProductResponse(
-            Long productId,
-            String productName,
-            Integer availableStock,
-            Integer minimumStock
-    ) implements Serializable {}
 
 
 }
