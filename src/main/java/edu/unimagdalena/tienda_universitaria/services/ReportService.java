@@ -12,5 +12,6 @@ public interface ReportService {
     List<TopCustomerResponse> topCustomers();
     List<LowStockProductResponse> lowStockProducts();
     List<OrderStatusHistoryResponse> getHistory(Long orderId);
-
+    List<TopCategoryResponse> topCategories();
+    
 }

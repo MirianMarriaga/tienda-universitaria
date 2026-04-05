@@ -1,14 +1,21 @@
 package edu.unimagdalena.tienda_universitaria.services;
 
-import edu.unimagdalena.tienda_universitaria.api.dto.CustomerDtos;
+import edu.unimagdalena.tienda_universitaria.api.dto.CustomerDtos.*;
+import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 
 import java.util.List;
 
 public interface CustomerService {
 
-    CustomerDtos.CustomerResponse create(CustomerDtos.CustomerCreateRequest req);
-    CustomerDtos.CustomerResponse get(Long id);
-    CustomerDtos.CustomerResponse update(Long id, CustomerDtos.CustomerUpdateRequest req);
-    List<CustomerDtos.CustomerResponse> list();
+    CustomerResponse create(CustomerCreateRequest req);
+    CustomerResponse get(Long id);
+    CustomerResponse update(Long id, CustomerUpdateRequest req);
+    void deactivate(Long id);
+    List<CustomerResponse> list();
+    CustomerResponse findByEmail(String email);
+    CustomerResponse findByIdentificationNumber(String identificationNumber);
+    List<CustomerResponse> findByStatus(CustomerStatus status);
+
+
 
 }

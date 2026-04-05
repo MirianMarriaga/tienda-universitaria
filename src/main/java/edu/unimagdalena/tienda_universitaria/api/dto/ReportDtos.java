@@ -40,4 +40,9 @@ public class ReportDtos {
             Instant changedAt
     ) implements Serializable {}
 
+    public record TopCategoryResponse(
+            Long categoryId,
+            String categoryName,
+            Long totalQuantitySold
+    ) implements Serializable {}
 }
