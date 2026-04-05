@@ -125,7 +125,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
                 .customer(customer1)
                 .address(address1)
                 .status(OrderStatus.CREATED)
-                .total(new BigDecimal("180000"))
+                .total(new BigDecimal("180000.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
@@ -133,7 +133,7 @@ class OrderRepositoryIntegrationTest extends AbstractRepositoryIT {
                 .customer(customer2)
                 .address(address2)
                 .status(OrderStatus.CREATED)
-                .total(new BigDecimal("31000"))
+                .total(new BigDecimal("31000.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
