@@ -16,6 +16,7 @@ public interface IProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     ProductResponse toResponse(Product p);
 
+    @Mapping(target = "category", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void patch(@MappingTarget Product target, ProductUpdateRequest dto);
 }
