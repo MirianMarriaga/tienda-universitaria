@@ -1,6 +1,7 @@
 package edu.unimagdalena.tienda_universitaria.repositories;
 
 import edu.unimagdalena.tienda_universitaria.entities.*;
+import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,12 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
     @Autowired
     OrderItemRepository orderItemRepo;
 
+    @Autowired
+    CustomerRepository customerRepo;
+
+    @Autowired
+    AddressRepository addressRepo;
+
 
     @Test
     @DisplayName("Product: Search by SKU")
@@ -46,7 +53,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -57,7 +64,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -85,7 +92,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -96,7 +103,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -127,7 +134,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -138,7 +145,7 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(false)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -199,10 +206,31 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .updatedAt(Instant.now())
                 .build());
 
+        var customer = customerRepo.save(Customer.builder()
+                .fullName("Juan Amador Hernandez")
+                .identificationNumber("1001234567")
+                .email("jahernandez@unimagdalena.edu.co")
+                .phone("+57 310 456 7821")
+                .status(CustomerStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        var address = addressRepo.save(Address.builder()
+                .customer(customer)
+                .street("Calle 22 #5-30")
+                .city("Santa Marta")
+                .state("Magdalena")
+                .country("Colombia")
+                .createdAt(Instant.now())
+                .build());
+
 
         var order = orderRepo.save(Order.builder()
+                .customer(customer)
+                .address(address)
                 .status(OrderStatus.PAID)
-                .total(new BigDecimal("550000"))
+                .total(new BigDecimal("550000.00"))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build());
@@ -211,8 +239,8 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .order(order)
                 .product(product1)
                 .quantity(1)
-                .unitPrice(new BigDecimal(250000))
-                .subtotal(new BigDecimal(250000))
+                .unitPrice(new BigDecimal(250000.00))
+                .subtotal(new BigDecimal(250000.00))
                 .createdAt(Instant.now())
                 .build());
 
@@ -220,8 +248,8 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .order(order)
                 .product(product2)
                 .quantity(2)
-                .unitPrice(new BigDecimal(150000))
-                .subtotal(new BigDecimal(300000))
+                .unitPrice(new BigDecimal(150000.00))
+                .subtotal(new BigDecimal(300000.00))
                 .createdAt(Instant.now())
                 .build());
 
@@ -233,5 +261,59 @@ class ProductRepositoryIntegrationTest extends AbstractRepositoryIT{
         // Then
         assertThat(result).isNotEmpty();
         assertThat((String) result.get(0)[1]).isEqualTo("Differential Calculus");
+    }
+
+    @Test
+    @DisplayName("Product: Search product with insufficient stock")
+    void findByProductsInsufficientStock() {
+        //Given
+        var category = categoryRepo.save(Category.builder()
+                .name("Books")
+                .description("Academic books")
+                .createdAt(Instant.now())
+                .build());
+
+        var product1 = productRepo.save(Product.builder()
+                .sku("BOOK-ENG-ALG-2ED-045")
+                .category(category)
+                .name("Engineering Algebra")
+                .description("Algebra book")
+                .price(BigDecimal.valueOf(45000.00))
+                .active(true)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        var product2 = productRepo.save(Product.builder()
+                .sku("BOOK-ENG-CAL-7ED-005")
+                .category(category)
+                .name("Differential Calculus")
+                .description("Calculus book")
+                .price(BigDecimal.valueOf(48000.00))
+                .active(false)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build());
+
+        inventoryRepo.save(Inventory.builder()
+                .product(product1)
+                .availableStock(2)
+                .minimumStock(10)
+                .updatedAt(Instant.now())
+                .build());
+
+        inventoryRepo.save(Inventory.builder()
+                .product(product2)
+                .availableStock(50)
+                .minimumStock(10)
+                .updatedAt(Instant.now())
+                .build());
+
+        //When
+        List<Object[]> result = productRepo.findByProductsInsufficientStock();
+        assertThat(result).hasSize(1);
+        assertThat((String) result.get(0)[1]).isEqualTo("Engineering Algebra");
+        assertThat((Integer) result.get(0)[2]).isEqualTo(2);
+        assertThat((Integer) result.get(0)[3]).isEqualTo(10);
     }
 }
