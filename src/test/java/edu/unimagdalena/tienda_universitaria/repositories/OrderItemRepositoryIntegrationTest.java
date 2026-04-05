@@ -1,16 +1,13 @@
 package edu.unimagdalena.tienda_universitaria.repositories;
-
 import edu.unimagdalena.tienda_universitaria.entities.*;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrderItemRepositoryIntegrationTest extends AbstractRepositoryIT{
@@ -167,3 +164,4 @@ public class OrderItemRepositoryIntegrationTest extends AbstractRepositoryIT{
         assertThat(result).hasSize(2);
     }
 }
+

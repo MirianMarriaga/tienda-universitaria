@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class InventoryRepositoryIntegrationTest extends AbstractRepositoryIT{
+class InventoryRepositoryIntegrationTest extends AbstractRepositoryIT{
 
     @Autowired
     ProductRepository productRepo;
@@ -39,7 +39,7 @@ public class InventoryRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Engineering Algebra")
                 .description("Algebra book")
-                .price(BigDecimal.valueOf(45000))
+                .price(BigDecimal.valueOf(45000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -49,7 +49,7 @@ public class InventoryRepositoryIntegrationTest extends AbstractRepositoryIT{
                 .category(category)
                 .name("Differential Calculus")
                 .description("Calculus book")
-                .price(BigDecimal.valueOf(48000))
+                .price(BigDecimal.valueOf(48000.00))
                 .active(true)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
