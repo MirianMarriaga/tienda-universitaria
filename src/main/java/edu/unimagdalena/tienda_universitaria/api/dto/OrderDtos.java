@@ -30,7 +30,7 @@ public class OrderDtos {
             String productName,
             Integer quantity,
             BigDecimal unitPrice,
-            BigDecimal subTotal,
+            BigDecimal subtotal,
             Instant createdAt
     ) implements Serializable {}
 

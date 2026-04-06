@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -26,6 +27,9 @@ public class CustomerServiceImpl implements CustomerService{
     @Transactional
     @Override public CustomerResponse create(CustomerCreateRequest req) {
         var customerEntity = mapper.toEntity(req);
+        customerEntity.setStatus(CustomerStatus.ACTIVE);
+        customerEntity.setCreatedAt(Instant.now());
+        customerEntity.setUpdatedAt(Instant.now());
         var entitySaved = repo.save(customerEntity);
         var customerDtoResponse = mapper.toResponse(entitySaved);
         return customerDtoResponse;
@@ -42,7 +46,8 @@ public class CustomerServiceImpl implements CustomerService{
         var c = repo.findById(id)
                 .orElseThrow(()-> new RuntimeException("Customer %d not found".formatted(id)));
         mapper.patch(c,req);
-        return mapper.toResponse(c);
+        c.setUpdatedAt(Instant.now());
+        return mapper.toResponse(repo.save(c));
     }
 
     @Override
@@ -71,7 +76,7 @@ public class CustomerServiceImpl implements CustomerService{
     public CustomerResponse findByEmail(String email){
         return repo.findByEmail(email)
                 .map(c-> mapper.toResponse(c))
-                .orElseThrow(()-> new RuntimeException("Customer with email %s not found".formatted(email)));//me sale rojo el c
+                .orElseThrow(()-> new RuntimeException("Customer with email %s not found".formatted(email)));
     }
 
     @Override @Transactional(readOnly = true)

@@ -28,6 +28,7 @@ public interface IOrderMapper {
     @Mapping(target = "orderId", source = "order.id")
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "subtotal", source = "subtotal")
     OrderItemResponse toResponse(OrderItem o);
 
     @Mapping(target = "customerId", source = "customer.id")
