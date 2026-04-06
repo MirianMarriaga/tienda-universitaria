@@ -18,5 +18,13 @@ public interface OrderService {
     OrderResponse deliver(Long id);
     List<OrderResponse> list();
 
-
+    List<OrderResponse> findByCustomerId(Long customerId);
+    List<OrderResponse> findByStatus(OrderStatus status);
+    List<OrderResponse> findByFilters(
+            Long customerId,
+            OrderStatus status,
+            Instant startDate,
+            Instant endDate,
+            BigDecimal minTotal,
+            BigDecimal maxTotal);
 }

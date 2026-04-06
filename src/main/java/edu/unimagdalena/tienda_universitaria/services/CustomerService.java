@@ -2,6 +2,9 @@ package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.CustomerDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
