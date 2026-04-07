@@ -138,6 +138,7 @@ public class ReportServiceImplTest {
                 .build();
 
         when(historyRepo.findHistoryByOrdenId(1L)).thenReturn(List.of(history));
+        when(orderRepo.existsById(1L)).thenReturn(true);
 
         // When
         var result = service.getHistory(1L);

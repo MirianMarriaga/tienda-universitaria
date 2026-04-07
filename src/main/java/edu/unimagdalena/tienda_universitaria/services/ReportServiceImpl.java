@@ -2,6 +2,7 @@ package edu.unimagdalena.tienda_universitaria.services;
 
 
 import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
+import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,9 @@ public class ReportServiceImpl implements ReportService {
     public List<BestSellingProductResponse> bestSellingProducts(Instant start, Instant end) {
         return productRepo.findProductsBestSoldByPeriod(start, end).stream()
                 .map(row -> new BestSellingProductResponse(
-                        (Long) row[0],
+                        ((Number) row[0]).longValue(),
                         (String) row[1],
-                        (Long) row[2]
+                        ((Number) row[2]).longValue()
                 ))
                 .toList();
     }
@@ -47,6 +48,11 @@ public class ReportServiceImpl implements ReportService {
     @Override
 
     public List<OrderStatusHistoryResponse> getHistory(Long orderId) {
+
+        if  (!orderRepo.existsById(orderId)) {
+            throw new ResourceNotFoundException("Order %d not found".formatted(orderId));
+        }
+
         return historyRepo.findHistoryByOrdenId(orderId).stream()
                 .map(h -> new OrderStatusHistoryResponse(
                         h.getId(),
@@ -62,7 +68,7 @@ public class ReportServiceImpl implements ReportService {
     public List<TopCustomerResponse> topCustomers() {
         return customerRepo.findTopByCustomer().stream()
                 .map(row -> new TopCustomerResponse(
-                        (Long) row[0],
+                        ((Number) row[0]).longValue(),
                         (String) row[1],
                         (BigDecimal) row[2]
                 ))
@@ -74,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
     public List<LowStockProductResponse> lowStockProducts() {
         return productRepo.findByProductsInsufficientStock().stream()
                 .map(row -> new LowStockProductResponse(
-                        (Long) row[0],
+                        ((Number) row[0]).longValue(),
                         (String) row[1],
                         ((Number) row[2]).intValue(),
                         ((Number) row[3]).intValue()
@@ -87,9 +93,9 @@ public class ReportServiceImpl implements ReportService {
     public List<TopCategoryResponse> topCategories() {
         return categoryRepo.findTopByCategory().stream()
                 .map(row -> new TopCategoryResponse(
-                        (Long) row[0],
+                        ((Number) row[0]).longValue(),
                         (String) row[1],
-                        (Long) row[2]
+                        ((Number) row[2]).longValue()
                 ))
                 .toList();
     }
