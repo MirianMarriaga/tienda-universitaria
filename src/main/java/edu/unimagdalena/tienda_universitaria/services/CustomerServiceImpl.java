@@ -8,6 +8,7 @@ import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import edu.unimagdalena.tienda_universitaria.repositories.CustomerRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.ICustomerMapper;
+import edu.unimagdalena.tienda_universitaria.exception.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,13 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Transactional
     @Override public CustomerResponse create(CustomerCreateRequest req) {
+
+        if (req.email() == null || req.email().isBlank())
+            throw new ValidationException("Email is required");
+
+        if (req.identificationNumber() == null || req.identificationNumber().isBlank())
+            throw new ValidationException("Identification number is required");
+
         var customerEntity = mapper.toEntity(req);
         customerEntity.setStatus(CustomerStatus.ACTIVE);
         customerEntity.setCreatedAt(Instant.now());
@@ -38,13 +46,13 @@ public class CustomerServiceImpl implements CustomerService{
     @Override @Transactional(readOnly = true)
     public CustomerResponse get(Long id) {
         return repo.findById(id).map(c-> mapper.toResponse(c))
-                .orElseThrow(()-> new RuntimeException("Customer %d not found".formatted(id)));
+                .orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(id)));
     }
 
     @Override @Transactional
     public CustomerResponse update(Long id, CustomerUpdateRequest req) {
         var c = repo.findById(id)
-                .orElseThrow(()-> new RuntimeException("Customer %d not found".formatted(id)));
+                .orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(id)));
         mapper.patch(c,req);
         c.setUpdatedAt(Instant.now());
         return mapper.toResponse(repo.save(c));
@@ -53,14 +61,14 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public void deactivate(Long id) {
         Customer c = repo.findById(id)
-                .orElseThrow(()-> new RuntimeException("Customer %d not found".formatted(id)));
+                .orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(id)));
 
         List<Order> orders = orderRepo.findByCustomer_Id(id);
 
         boolean hasActiveOrders = orders.stream()
                 .anyMatch(o -> o.getStatus() != OrderStatus.CANCELLED && o.getStatus() != OrderStatus.DELIVERED);
         if(hasActiveOrders) {
-            throw new RuntimeException("Customer has active orders");
+            throw new BusinessException("Customer has active orders");
         }
 
         c.setStatus(CustomerStatus.INACTIVE);
@@ -76,14 +84,14 @@ public class CustomerServiceImpl implements CustomerService{
     public CustomerResponse findByEmail(String email){
         return repo.findByEmail(email)
                 .map(c-> mapper.toResponse(c))
-                .orElseThrow(()-> new RuntimeException("Customer with email %s not found".formatted(email)));
+                .orElseThrow(()-> new ResourceNotFoundException("Customer with email %s not found".formatted(email)));
     }
 
     @Override @Transactional(readOnly = true)
     public CustomerResponse findByIdentificationNumber(String identificationNumber) {
         return repo.findByIdentificationNumber(identificationNumber)
                 .map(c-> mapper.toResponse(c))
-                .orElseThrow(()-> new RuntimeException("Customer with if numer %s not found".formatted(identificationNumber)));
+                .orElseThrow(()-> new ResourceNotFoundException("Customer with if numer %s not found".formatted(identificationNumber)));
     }
 
     @Override @Transactional(readOnly = true)

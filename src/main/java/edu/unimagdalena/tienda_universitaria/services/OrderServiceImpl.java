@@ -9,6 +9,8 @@ import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import edu.unimagdalena.tienda_universitaria.repositories.*;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IOrderMapper;
+import edu.unimagdalena.tienda_universitaria.exception.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,22 +37,22 @@ public class OrderServiceImpl implements OrderService{
     public OrderResponse create(OrderCreateRequest req) {
 
         if (req.items() == null || req.items().isEmpty())
-            throw new RuntimeException("The order must have at least one item");
+            throw new ValidationException("The order must have at least one item");
 
         if (req.items().stream().anyMatch(i->i.quantity() <= 0))
-            throw new RuntimeException("all quantities must be greater than zero");
+            throw new ValidationException("all quantities must be greater than zero");
 
         var customer = customerRepo.findById(req.customerId())
-                .orElseThrow(() -> new RuntimeException("Customer %d not found".formatted(req.customerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer %d not found".formatted(req.customerId())));
 
         if(customer.getStatus() != CustomerStatus.ACTIVE)
-            throw new RuntimeException("Customer %d is not active".formatted(req.customerId()));
+            throw new BusinessException("Customer %d is not active".formatted(req.customerId()));
 
         var address = addressRepo.findById(req.addressId())
-                .orElseThrow(()-> new RuntimeException("Address %d not found".formatted(req.addressId())));
+                .orElseThrow(()-> new ResourceNotFoundException("Address %d not found".formatted(req.addressId())));
 
         if(!address.getCustomer().getId().equals(req.customerId()))
-            throw new RuntimeException("The address does not belong to the customer");
+            throw new ConflictException("The address does not belong to the customer");
 
         var order = Order.builder()
                 .customer(customer)
@@ -65,9 +67,9 @@ public class OrderServiceImpl implements OrderService{
 
         List<OrderItem> items = req.items().stream().map(i -> {
             var product = productRepo.findById(i.productId())
-                    .orElseThrow(() -> new RuntimeException("Product %d not found".formatted(i.productId())));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product %d not found".formatted(i.productId())));
             if (!product.getActive())
-                throw new RuntimeException("product %d is not active".formatted(i.productId()));
+                throw new BusinessException("product %d is not active".formatted(i.productId()));
             var unitPrice = product.getPrice();
             var subtotal = unitPrice.multiply(BigDecimal.valueOf(i.quantity()));
             return OrderItem.builder()
@@ -101,24 +103,24 @@ public class OrderServiceImpl implements OrderService{
     @Override @Transactional(readOnly = true)
     public OrderResponse get(Long id) {
         return OrderRepo.findById(id).map(o-> mapper.toResponse(o))
-                .orElseThrow(()-> new RuntimeException("Order %d not found".formatted(id)));
+                .orElseThrow(()-> new ResourceNotFoundException("Order %d not found".formatted(id)));
     }
 
     @Transactional
     @Override
     public OrderResponse pay(Long id) {
         var order = OrderRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order %d not found".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if(order.getStatus() != OrderStatus.CREATED)
-            throw new RuntimeException("only created orders can be paid");
+            throw new BusinessException("only created orders can be paid");
 
         for (var item : order.getItems()) {
             var inventory = inventoryRepo.findByProduct_Id(item.getProduct().getId())
-                    .orElseThrow(() -> new RuntimeException("inventory not found for product %d".formatted(item.getProduct().getId())));
+                    .orElseThrow(() -> new ResourceNotFoundException("inventory not found for product %d".formatted(item.getProduct().getId())));
 
             if (inventory.getAvailableStock() < item.getQuantity())
-                throw new RuntimeException("insufficient stock for product %d".formatted(item.getProduct().getId()));
+                throw new BusinessException("insufficient stock for product %d".formatted(item.getProduct().getId()));
         }
 
         for (var item: order.getItems()) {
@@ -144,13 +146,13 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponse cancel(Long id) {
         var order = OrderRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order %d not found".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if (order.getStatus() == OrderStatus.SHIPPED)
-            throw new RuntimeException("Shipped orders can't be cancelled");
+            throw new BusinessException("Shipped orders can't be cancelled");
 
         if (order.getStatus() == OrderStatus.DELIVERED)
-            throw new RuntimeException(("Delivered orders can't be cancelled"));
+            throw new BusinessException(("Delivered orders can't be cancelled"));
 
         if (order.getStatus() == OrderStatus.PAID) {
             for (var item : order.getItems()) {
@@ -177,10 +179,10 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponse ship(Long id) {
         var order = OrderRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException(("Order %d not found".formatted(id))));
+                .orElseThrow(() -> new ResourceNotFoundException(("Order %d not found".formatted(id))));
 
         if (order.getStatus() != OrderStatus.PAID)
-            throw new RuntimeException("only paid orders can be shipped");
+            throw new BusinessException("only paid orders can be shipped");
 
         order.setStatus(OrderStatus.SHIPPED);
         order.setUpdatedAt(Instant.now());
@@ -199,10 +201,10 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponse deliver(Long id) {
         var order = OrderRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order %d not found".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if (order.getStatus() != OrderStatus.SHIPPED)
-            throw new RuntimeException("only shipped orders can be delivered");
+            throw new BusinessException("only shipped orders can be delivered");
 
         order.setStatus(OrderStatus.DELIVERED);
         order.setUpdatedAt(Instant.now());

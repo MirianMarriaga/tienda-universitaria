@@ -3,6 +3,8 @@ package edu.unimagdalena.tienda_universitaria.services;
 import edu.unimagdalena.tienda_universitaria.api.dto.InventoryDtos.*;
 
 import edu.unimagdalena.tienda_universitaria.repositories.InventoryRepository;
+import edu.unimagdalena.tienda_universitaria.exception.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +21,21 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     public InventoryResponse update(Long productId, InventoryUpdateRequest req) {
         var inventory = inventoryRepo.findByProduct_Id(productId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found for product %d".formatted(productId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product %d".formatted(productId)));
 
-        if (req.availableStock() != null)
+        if (req.availableStock() != null) {
+            if (req.availableStock() < 0)
+                throw new ValidationException("Available stock cannot be negative");
             inventory.setAvailableStock(req.availableStock());
+        }
 
-        if (req.minimumStock() != null)
+        if (req.minimumStock() != null) {
+            if (req.minimumStock() < 0)
+                throw new ValidationException("Minimum stock cannot be negative");
             inventory.setMinimumStock(req.minimumStock());
+        }
+
+
 
         inventory.setUpdatedAt(Instant.now());
         var saved = inventoryRepo.save(inventory);
@@ -42,7 +52,7 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     public InventoryResponse getByProductId(Long productId) {
         var inventory = inventoryRepo.findByProduct_Id(productId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found for product %d".formatted(productId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product %d".formatted(productId)));
         return new InventoryResponse(
                 inventory.getId(),
                 inventory.getProduct().getId(),
