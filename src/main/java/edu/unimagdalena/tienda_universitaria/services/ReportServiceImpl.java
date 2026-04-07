@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
@@ -23,19 +23,17 @@ public class ReportServiceImpl implements ReportService {
     private final OrderStatusHistoryRepository historyRepo;
 
     @Override
-    @Transactional(readOnly = true)
     public List<BestSellingProductResponse> bestSellingProducts(Instant start, Instant end) {
         return productRepo.findProductsBestSoldByPeriod(start, end).stream()
                 .map(row -> new BestSellingProductResponse(
-                        ((Number) row[0]).longValue(),
+                        (Long) row[0],
                         (String) row[1],
-                        ((Number) row[2]).longValue()
+                        (Long) row[2]
                 ))
                 .toList();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<MonthlyIncomeResponse> monthlyIncome() {
         return orderRepo.findByMonthlyRevenue().stream()
                 .map(row -> new MonthlyIncomeResponse(
@@ -48,7 +46,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
 
-    @Transactional(readOnly = true)
     public List<OrderStatusHistoryResponse> getHistory(Long orderId) {
         return historyRepo.findHistoryByOrdenId(orderId).stream()
                 .map(h -> new OrderStatusHistoryResponse(
@@ -65,7 +62,7 @@ public class ReportServiceImpl implements ReportService {
     public List<TopCustomerResponse> topCustomers() {
         return customerRepo.findTopByCustomer().stream()
                 .map(row -> new TopCustomerResponse(
-                        ((Number) row[0]).longValue(),
+                        (Long) row[0],
                         (String) row[1],
                         (BigDecimal) row[2]
                 ))
@@ -77,7 +74,7 @@ public class ReportServiceImpl implements ReportService {
     public List<LowStockProductResponse> lowStockProducts() {
         return productRepo.findByProductsInsufficientStock().stream()
                 .map(row -> new LowStockProductResponse(
-                        ((Number) row[0]).longValue(),
+                        (Long) row[0],
                         (String) row[1],
                         ((Number) row[2]).intValue(),
                         ((Number) row[3]).intValue()
@@ -90,9 +87,9 @@ public class ReportServiceImpl implements ReportService {
     public List<TopCategoryResponse> topCategories() {
         return categoryRepo.findTopByCategory().stream()
                 .map(row -> new TopCategoryResponse(
-                        ((Number) row[0]).longValue(),
+                        (Long) row[0],
                         (String) row[1],
-                        ((Number) row[2]).longValue()
+                        (Long) row[2]
                 ))
                 .toList();
     }

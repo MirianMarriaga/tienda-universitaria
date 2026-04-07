@@ -3,6 +3,7 @@ package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.CategoryDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Category;
+import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.repositories.AddressRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.ICategoryMapper;
@@ -25,29 +26,24 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse create(CategoryCreateRequest req) {
-        categoryRepo.findByNameIgnoreCase(req.name()).ifPresent(c ->{
-            throw new RuntimeException("Category %s already exists".formatted(req.name()));
-
-        });
-
-        Category category = mapper.toEntity(req);
+        var category = mapper.toEntity(req);
         category.setCreatedAt(Instant.now());
-        return mapper.toResponse(categoryRepo.save(category));
+        var saved = categoryRepo.save(category);
+        return mapper.toResponse(saved);
     }
+
     @Override
     @Transactional(readOnly = true)
     public CategoryResponse getByName(String name) {
         return categoryRepo.findByNameIgnoreCase(name)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new RuntimeException(
-                        "Category %s not found".formatted(name)
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("Category %s not found".formatted(name)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public CategoryResponse get(Long id) {
-        return categoryRepo.findById(id).map(mapper::toResponse).orElseThrow(() -> new RuntimeException("Category %d not found".formatted(id)));
+        return categoryRepo.findById(id).map(mapper::toResponse).orElseThrow(() -> new ResourceNotFoundException("Category %d not found".formatted(id)));
     }
     @Override
     @Transactional(readOnly = true)

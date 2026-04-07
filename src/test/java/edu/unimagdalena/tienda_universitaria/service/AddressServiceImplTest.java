@@ -1,6 +1,5 @@
 package edu.unimagdalena.tienda_universitaria.service;
 
-
 import edu.unimagdalena.tienda_universitaria.api.dto.AddressDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Address;
 import edu.unimagdalena.tienda_universitaria.entities.Customer;
@@ -24,14 +23,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AddressServiceImplTest {
-    @Mock
-    AddressRepository addressRepo;
 
-    @Mock
-    CustomerRepository customerRepo;
-
-    @Mock
-    IAddressMapper mapper;
+    @Mock AddressRepository addressRepo;
+    @Mock CustomerRepository customerRepo;
+    @Mock IAddressMapper mapper;
 
     @InjectMocks
     AddressServiceImpl service;
@@ -40,22 +35,17 @@ public class AddressServiceImplTest {
     void shouldCreateAddress() {
         // Given
         var customer = Customer.builder()
-                .id(1L)
-                .fullName("Juan Smith")
+                .id(1L).fullName("Angelica Villegas")
                 .status(CustomerStatus.ACTIVE)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .createdAt(Instant.now()).updatedAt(Instant.now())
                 .build();
 
         var req = new AddressCreateRequest(1L, "Street 22", "Santa Marta", "Magdalena", "Colombia");
 
         var address = Address.builder()
-                .id(1L)
-                .customer(customer)
-                .street("Street 22")
-                .city("Santa Marta")
-                .state("Magdalena")
-                .country("Colombia")
+                .id(1L).customer(customer)
+                .street("Street 22").city("Santa Marta")
+                .state("Magdalena").country("Colombia")
                 .createdAt(Instant.now())
                 .build();
 
@@ -76,9 +66,11 @@ public class AddressServiceImplTest {
 
     @Test
     void shouldThrowWhenCustomerNotFound() {
+        // Given
         var req = new AddressCreateRequest(99L, "Street 22", "Santa Marta", "Magdalena", "Colombia");
         when(customerRepo.findById(99L)).thenReturn(Optional.empty());
 
+        // When / Then
         assertThatThrownBy(() -> service.create(99L, req))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("99");
@@ -87,10 +79,11 @@ public class AddressServiceImplTest {
     @Test
     void shouldListAddressesByCustomer() {
         // Given
-        var customer = Customer.builder().id(1L).build();
+        var customer = Customer.builder().id(1L).fullName("Angelica Villegas").build();
         var address = Address.builder().id(1L).customer(customer).city("Santa Marta").build();
         var response = new AddressResponse(1L, 1L, "Street 22", "Santa Marta", "Magdalena", "Colombia", Instant.now());
 
+        when(customerRepo.findById(1L)).thenReturn(Optional.of(customer));
         when(addressRepo.findByCustomer_Id(1L)).thenReturn(List.of(address));
         when(mapper.toResponse(address)).thenReturn(response);
 
@@ -101,5 +94,15 @@ public class AddressServiceImplTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).city()).isEqualTo("Santa Marta");
     }
-}
 
+    @Test
+    void shouldThrowWhenCustomerNotFoundOnList() {
+        // Given
+        when(customerRepo.findById(99L)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThatThrownBy(() -> service.listByCustomer(99L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("99");
+    }
+}

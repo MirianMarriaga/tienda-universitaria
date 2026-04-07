@@ -1,6 +1,5 @@
 package edu.unimagdalena.tienda_universitaria.service;
 
-
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Category;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -26,12 +24,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
 
-    @Mock
-    ProductRepository productRepo;
-    @Mock
-    CategoryRepository categoryRepo;
-    @Mock
-    IProductMapper mapper;
+    @Mock ProductRepository productRepo;
+    @Mock CategoryRepository categoryRepo;
+    @Mock IProductMapper mapper;
 
     @InjectMocks
     ProductServiceImpl service;
@@ -39,35 +34,19 @@ public class ProductServiceImplTest {
     @Test
     void shouldCreateProduct() {
         // Given
-        var category = Category.builder()
-                .id(1L)
-                .name("Books")
-                .createdAt(Instant.now())
-                .build();
-
-        var req = new ProductCreateRequest(
-                "BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("45000")
-        );
+        var category = Category.builder().id(1L).name("Books").createdAt(Instant.now()).build();
+        var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("45000.00"));
 
         var product = Product.builder()
-                .id(1L)
-                .sku("BOOK-001")
-                .name("Algebra")
-                .category(category)
-                .price(new BigDecimal("45000.00"))
-                .active(true)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .id(1L).sku("BOOK-001").name("Algebra")
+                .category(category).price(new BigDecimal("45000.00"))
+                .active(true).createdAt(Instant.now()).updatedAt(Instant.now())
                 .build();
 
-        var response = new ProductResponse(
-                1L, "BOOK-001", 1L, "Algebra",
-                "Math book", new BigDecimal("45000"), true,
-                Instant.now(), Instant.now()
-        );
+        var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "Math book",
+                new BigDecimal("45000.00"), true, Instant.now(), Instant.now());
 
-        Mockito.when(categoryRepo.findById(1L)).thenReturn(Optional.of(category));
-        when(productRepo.findBySku("BOOK-001")).thenReturn(Optional.empty());
+        when(categoryRepo.findById(1L)).thenReturn(Optional.of(category));
         when(mapper.toEntity(req)).thenReturn(product);
         when(productRepo.save(any())).thenReturn(product);
         when(mapper.toResponse(product)).thenReturn(response);
@@ -81,25 +60,39 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    void shouldThrowWhenSkuAlreadyExists() {
+    void shouldThrowWhenCategoryNotFoundOnCreate() {
         // Given
-        var category = Category.builder().id(1L).name("Books").createdAt(Instant.now()).build();
-        var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("45000"));
-        var existing = Product.builder().id(1L).sku("BOOK-001").build();
+        var req = new ProductCreateRequest("BOOK-001", 99L, "Algebra", "Math book", new BigDecimal("45000.00"));
+        when(categoryRepo.findById(99L)).thenReturn(Optional.empty());
 
-        when(categoryRepo.findById(1L)).thenReturn(Optional.of(category));
-        when(productRepo.findBySku("BOOK-001")).thenReturn(Optional.of(existing));
-
-        // Then
+        // When / Then
         assertThatThrownBy(() -> service.create(req))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("BOOK-001");
+                .hasMessageContaining("99");
+    }
+
+    @Test
+    void shouldGetProduct() {
+        // Given
+        var product = Product.builder().id(1L).name("Algebra").build();
+        var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "", new BigDecimal("45000.00"), true, Instant.now(), Instant.now());
+
+        when(productRepo.findById(1L)).thenReturn(Optional.of(product));
+        when(mapper.toResponse(product)).thenReturn(response);
+
+        // When
+        var result = service.get(1L);
+
+        // Then
+        assertThat(result.name()).isEqualTo("Algebra");
     }
 
     @Test
     void shouldThrowWhenProductNotFound() {
+        // Given
         when(productRepo.findById(99L)).thenReturn(Optional.empty());
 
+        // When / Then
         assertThatThrownBy(() -> service.get(99L))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("99");
@@ -109,11 +102,8 @@ public class ProductServiceImplTest {
     void shouldDeactivateProduct() {
         // Given
         var product = Product.builder()
-                .id(1L)
-                .sku("BOOK-001")
-                .active(true)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .id(1L).sku("BOOK-001").active(true)
+                .createdAt(Instant.now()).updatedAt(Instant.now())
                 .build();
 
         when(productRepo.findById(1L)).thenReturn(Optional.of(product));
@@ -131,7 +121,7 @@ public class ProductServiceImplTest {
     void shouldReturnActiveProductsByCategory() {
         // Given
         var product = Product.builder().id(1L).name("Algebra").active(true).build();
-        var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "", new BigDecimal("45000"), true, Instant.now(), Instant.now());
+        var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "", new BigDecimal("45000.00"), true, Instant.now(), Instant.now());
 
         when(productRepo.findByCategory_IdAndActiveTrue(1L)).thenReturn(List.of(product));
         when(mapper.toResponse(product)).thenReturn(response);
@@ -144,4 +134,24 @@ public class ProductServiceImplTest {
         assertThat(result.get(0).name()).isEqualTo("Algebra");
     }
 
+    @Test
+    void shouldUpdateProduct() {
+        // Given
+        var category = Category.builder().id(2L).name("Science").build();
+        var product = Product.builder().id(1L).name("Algebra").active(true).createdAt(Instant.now()).updatedAt(Instant.now()).build();
+        var req = new ProductUpdateRequest(2L, "Algebra II", "Updated", new BigDecimal("50000.00"), true);
+        var response = new ProductResponse(1L, "BOOK-001", 2L, "Algebra II", "Updated", new BigDecimal("50000.00"), true, Instant.now(), Instant.now());
+
+        when(productRepo.findById(1L)).thenReturn(Optional.of(product));
+        when(categoryRepo.findById(2L)).thenReturn(Optional.of(category));
+        when(productRepo.save(any())).thenReturn(product);
+        when(mapper.toResponse(product)).thenReturn(response);
+
+        // When
+        var result = service.update(1L, req);
+
+        // Then
+        assertThat(result.name()).isEqualTo("Algebra II");
+        verify(productRepo).save(product);
+    }
 }

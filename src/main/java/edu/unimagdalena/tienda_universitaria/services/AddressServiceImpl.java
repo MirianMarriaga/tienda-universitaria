@@ -2,6 +2,7 @@ package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.AddressDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Address;
+import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.repositories.AddressRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.CustomerRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IAddressMapper;
@@ -25,17 +26,21 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressResponse create(Long customerId, AddressCreateRequest req) {
         var customer = customerRepo.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer %d not found".formatted(customerId)));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer %d not found".formatted(customerId)));
 
-        Address address = mapper.toEntity(req);
+        var address = mapper.toEntity(req);
         address.setCustomer(customer);
         address.setCreatedAt(Instant.now());
-        return mapper.toResponse(addressRepo.save(address));
+
+        var saved = addressRepo.save(address);
+        return mapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<AddressResponse> listByCustomer(Long customerId) {
+        customerRepo.findById(customerId).orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(customerId)));
+
         return addressRepo.findByCustomer_Id(customerId).stream()
                 .map(mapper::toResponse)
                 .toList();
