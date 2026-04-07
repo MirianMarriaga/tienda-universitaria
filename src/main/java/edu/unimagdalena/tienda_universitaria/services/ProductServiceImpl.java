@@ -4,7 +4,9 @@ package edu.unimagdalena.tienda_universitaria.services;
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
+import edu.unimagdalena.tienda_universitaria.exception.ConflictException;
 import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
+import edu.unimagdalena.tienda_universitaria.exception.ValidationException;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IProductMapper;
@@ -13,6 +15,7 @@ import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -27,6 +30,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse create(ProductCreateRequest req){
+
+        if (req.price().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("Price must be greater than zero");
+        }
+
+        productRepo.findBySku(req.sku()).ifPresent(p -> {
+            throw new ConflictException("SKU %s already exists".formatted(req.sku()));
+        });
+
         var category = categoryRepo.findById(req.category())
                 .orElseThrow(()-> new ResourceNotFoundException("Category %d not found".formatted(req.category())));
 

@@ -3,6 +3,9 @@ package edu.unimagdalena.tienda_universitaria.service;
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Category;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
+import edu.unimagdalena.tienda_universitaria.exception.ConflictException;
+import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
+import edu.unimagdalena.tienda_universitaria.exception.ValidationException;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
 import edu.unimagdalena.tienda_universitaria.services.ProductServiceImpl;
@@ -46,6 +49,7 @@ public class ProductServiceImplTest {
         var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "Math book",
                 new BigDecimal("45000.00"), true, Instant.now(), Instant.now());
 
+        when(productRepo.findBySku("BOOK-001")).thenReturn(Optional.empty());
         when(categoryRepo.findById(1L)).thenReturn(Optional.of(category));
         when(mapper.toEntity(req)).thenReturn(product);
         when(productRepo.save(any())).thenReturn(product);
@@ -60,14 +64,41 @@ public class ProductServiceImplTest {
     }
 
     @Test
+    void shouldThrowWhenPriceIsZeroOrNegative() {
+        // Given
+        var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("0"));
+
+        // When / Then
+        assertThatThrownBy(() -> service.create(req))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("greater than zero");
+    }
+
+    @Test
+    void shouldThrowWhenSkuAlreadyExists() {
+        // Given
+        var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("45000.00"));
+        var existing = Product.builder().id(1L).sku("BOOK-001").build();
+
+        when(productRepo.findBySku("BOOK-001")).thenReturn(Optional.of(existing));
+
+        // When / Then
+        assertThatThrownBy(() -> service.create(req))
+                .isInstanceOf(ConflictException.class)
+                .hasMessageContaining("BOOK-001");
+    }
+
+    @Test
     void shouldThrowWhenCategoryNotFoundOnCreate() {
         // Given
         var req = new ProductCreateRequest("BOOK-001", 99L, "Algebra", "Math book", new BigDecimal("45000.00"));
+
+        when(productRepo.findBySku("BOOK-001")).thenReturn(Optional.empty());
         when(categoryRepo.findById(99L)).thenReturn(Optional.empty());
 
         // When / Then
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("99");
     }
 
@@ -94,7 +125,7 @@ public class ProductServiceImplTest {
 
         // When / Then
         assertThatThrownBy(() -> service.get(99L))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("99");
     }
 
