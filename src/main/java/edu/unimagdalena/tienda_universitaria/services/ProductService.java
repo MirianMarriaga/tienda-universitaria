@@ -14,6 +14,5 @@ public interface ProductService {
     void deactivate(Long id);
     ProductResponse getProductBySku(String sku);
     List<ProductResponse> getActiveProductsByCategory(Long categoryId);
-    List<LowStockProductResponse> getLowStockProducts();
 
 }

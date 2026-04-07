@@ -10,6 +10,6 @@ public interface CategoryService {
     CategoryResponse create(CategoryCreateRequest req);
     CategoryResponse get(Long id);
     List<CategoryResponse> list();
-    CategoryRepository findByName(String name);
+    CategoryResponse getByName(String name);
 
 }
