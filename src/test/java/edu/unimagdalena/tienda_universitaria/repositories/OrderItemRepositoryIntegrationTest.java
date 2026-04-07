@@ -140,7 +140,7 @@ public class OrderItemRepositoryIntegrationTest extends AbstractRepositoryIT{
 
         var ordenItem2 = orderItemRepo.save(OrderItem.builder()
                 .order(order1)
-                .product(product1)
+                .product(product2)
                 .quantity(quantity2)
                 .unitPrice(product2.getPrice())
                 .subtotal(subtotal2)
@@ -161,6 +161,7 @@ public class OrderItemRepositoryIntegrationTest extends AbstractRepositoryIT{
         //Then
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getOrder().getId()).isEqualTo(order1.getId());
+        assertThat(result.get(1).getOrder().getId()).isEqualTo(order1.getId());
         assertThat(result).hasSize(2);
     }
 }
