@@ -7,6 +7,7 @@ import edu.unimagdalena.tienda_universitaria.exception.ConflictException;
 import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.exception.ValidationException;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
+import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
 import edu.unimagdalena.tienda_universitaria.services.ProductServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IProductMapper;
@@ -30,6 +31,7 @@ public class ProductServiceImplTest {
     @Mock ProductRepository productRepo;
     @Mock CategoryRepository categoryRepo;
     @Mock IProductMapper mapper;
+    @Mock OrderRepository orderRepo;
 
     @InjectMocks
     ProductServiceImpl service;
@@ -150,6 +152,7 @@ public class ProductServiceImplTest {
 
         when(productRepo.findById(1L)).thenReturn(Optional.of(product));
         when(productRepo.save(any())).thenReturn(product);
+        when(orderRepo.findAll()).thenReturn(List.of());
 
         // When
         service.deactivate(1L);

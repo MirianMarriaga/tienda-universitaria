@@ -4,10 +4,13 @@ package edu.unimagdalena.tienda_universitaria.services;
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
+import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
+import edu.unimagdalena.tienda_universitaria.exception.BusinessException;
 import edu.unimagdalena.tienda_universitaria.exception.ConflictException;
 import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.exception.ValidationException;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
+import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IProductMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
+    private final OrderRepository orderRepo;
     private final IProductMapper mapper;
 
     @Override
@@ -81,8 +85,19 @@ public class ProductServiceImpl implements ProductService {
         var product = productRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product  %d not found".formatted(id)));
 
+
         if (req.price() != null && req.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Price must be greater than zero");
+        }
+
+        if (Boolean.FALSE.equals(req.active())) {
+            boolean hasActiveOrders = orderRepo.findAll().stream()
+                    .filter(o -> o.getStatus() != OrderStatus.CANCELLED
+                            && o.getStatus() != OrderStatus.DELIVERED)
+                    .flatMap(o -> o.getItems().stream())
+                    .anyMatch(i -> i.getProduct().getId().equals(id));
+            if (hasActiveOrders)
+                throw new BusinessException("Product %d cannot be deactivated because it has active orders".formatted(id));
         }
 
         if ( (req.category() != null)){
@@ -100,6 +115,16 @@ public class ProductServiceImpl implements ProductService {
     public void deactivate(Long id) {
         var product = productRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product %d not found".formatted(id)));
+
+        boolean hasActiveOrders = orderRepo.findAll().stream()
+                .filter(o -> o.getStatus() != OrderStatus.CANCELLED
+                        && o.getStatus() != OrderStatus.DELIVERED)
+                .flatMap(o -> o.getItems().stream())
+                .anyMatch(i -> i.getProduct().getId().equals(id));
+
+        if (hasActiveOrders)
+            throw new BusinessException("Product %d cannot be deactivated because it has active orders".formatted(id));
+
         product.setActive(false);
         product.setUpdatedAt(Instant.now());
         productRepo.save(product);
