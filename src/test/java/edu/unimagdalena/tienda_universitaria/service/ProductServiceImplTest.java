@@ -75,6 +75,17 @@ public class ProductServiceImplTest {
     }
 
     @Test
+    void shouldThrowWhenPriceIsNull() {
+        // Given
+        var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", null);
+
+        // When / Then
+        assertThatThrownBy(() -> service.create(req))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Price");
+    }
+
+    @Test
     void shouldThrowWhenSkuAlreadyExists() {
         // Given
         var req = new ProductCreateRequest("BOOK-001", 1L, "Algebra", "Math book", new BigDecimal("45000.00"));
@@ -151,9 +162,11 @@ public class ProductServiceImplTest {
     @Test
     void shouldReturnActiveProductsByCategory() {
         // Given
+        var category = Category.builder().id(1L).build();
         var product = Product.builder().id(1L).name("Algebra").active(true).build();
         var response = new ProductResponse(1L, "BOOK-001", 1L, "Algebra", "", new BigDecimal("45000.00"), true, Instant.now(), Instant.now());
 
+        when(categoryRepo.existsById(1L)).thenReturn(true);
         when(productRepo.findByCategory_IdAndActiveTrue(1L)).thenReturn(List.of(product));
         when(mapper.toResponse(product)).thenReturn(response);
 

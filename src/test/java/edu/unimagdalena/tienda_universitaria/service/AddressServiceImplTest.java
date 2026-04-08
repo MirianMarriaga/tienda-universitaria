@@ -4,6 +4,7 @@ import edu.unimagdalena.tienda_universitaria.api.dto.AddressDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Address;
 import edu.unimagdalena.tienda_universitaria.entities.Customer;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
+import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.repositories.AddressRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.CustomerRepository;
 import edu.unimagdalena.tienda_universitaria.services.AddressServiceImpl;
@@ -72,7 +73,7 @@ public class AddressServiceImplTest {
 
         // When / Then
         assertThatThrownBy(() -> service.create(99L, req))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("99");
     }
 
@@ -83,7 +84,7 @@ public class AddressServiceImplTest {
         var address = Address.builder().id(1L).customer(customer).city("Santa Marta").build();
         var response = new AddressResponse(1L, 1L, "Street 22", "Santa Marta", "Magdalena", "Colombia", Instant.now());
 
-        when(customerRepo.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepo.existsById(1L)).thenReturn(true);
         when(addressRepo.findByCustomer_Id(1L)).thenReturn(List.of(address));
         when(mapper.toResponse(address)).thenReturn(response);
 
@@ -98,7 +99,7 @@ public class AddressServiceImplTest {
     @Test
     void shouldThrowWhenCustomerNotFoundOnList() {
         // Given
-        when(customerRepo.findById(99L)).thenReturn(Optional.empty());
+        when(customerRepo.existsById(99L)).thenReturn(false);
 
         // When / Then
         assertThatThrownBy(() -> service.listByCustomer(99L))

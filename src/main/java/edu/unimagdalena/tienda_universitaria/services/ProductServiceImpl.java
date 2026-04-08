@@ -31,7 +31,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse create(ProductCreateRequest req){
 
-        if (req.price().compareTo(BigDecimal.ZERO) <= 0) {
+        if (req.name() == null || req.name().isBlank()) {
+            throw new ValidationException("Product name is required");
+        }
+
+        if (req.sku() == null || req.sku().isBlank()) {
+            throw new ValidationException("SKU is required");
+        }
+
+        if (req.price() == null || req.price().compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Price must be greater than zero");
         }
 
@@ -72,6 +80,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse update(Long id, ProductUpdateRequest req){
         var product = productRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product  %d not found".formatted(id)));
+
+        if (req.price() != null && req.price().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("Price must be greater than zero");
+        }
+
         if ( (req.category() != null)){
             var category = categoryRepo.findById(req.category())
                     .orElseThrow(() -> new ResourceNotFoundException("Category  %d not found".formatted(req.category())));
@@ -95,6 +108,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getProductBySku(String sku){
+
+        if (sku == null || sku.isBlank()) {
+            throw new ValidationException("SKU is required");
+        }
+
         return productRepo.findBySku(sku)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with Sku %s not found".formatted(sku)));
@@ -103,6 +121,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductResponse> getActiveProductsByCategory(Long categoryId) {
+
+        if (!categoryRepo.existsById(categoryId)) {
+            throw new ResourceNotFoundException(
+                    "Category %d not found".formatted(categoryId));
+        }
+
         return productRepo.findByCategory_IdAndActiveTrue(categoryId).stream()
                 .map(mapper::toResponse)
                 .toList();
