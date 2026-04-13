@@ -1,20 +1,16 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.InventoryDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Inventory;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
 import edu.unimagdalena.tienda_universitaria.repositories.InventoryRepository;
-import edu.unimagdalena.tienda_universitaria.services.InventoryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

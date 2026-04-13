@@ -1,11 +1,10 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.CustomerDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Customer;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.repositories.CustomerRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
-import edu.unimagdalena.tienda_universitaria.services.CustomerServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.ICustomerMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

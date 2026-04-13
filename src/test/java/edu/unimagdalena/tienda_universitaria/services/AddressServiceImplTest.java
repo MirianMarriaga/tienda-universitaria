@@ -1,4 +1,4 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.AddressDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Address;
@@ -7,7 +7,6 @@ import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.exception.ResourceNotFoundException;
 import edu.unimagdalena.tienda_universitaria.repositories.AddressRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.CustomerRepository;
-import edu.unimagdalena.tienda_universitaria.services.AddressServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IAddressMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

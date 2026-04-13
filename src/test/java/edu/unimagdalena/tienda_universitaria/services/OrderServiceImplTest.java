@@ -1,18 +1,16 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.OrderDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.*;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import edu.unimagdalena.tienda_universitaria.repositories.*;
-import edu.unimagdalena.tienda_universitaria.services.OrderServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IOrderMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;

@@ -1,8 +1,7 @@
-package edu.unimagdalena.tienda_universitaria.service.mapper;
+package edu.unimagdalena.tienda_universitaria.services.mapper;
 import edu.unimagdalena.tienda_universitaria.api.dto.CustomerDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Customer;
 import edu.unimagdalena.tienda_universitaria.entities.enums.CustomerStatus;
-import edu.unimagdalena.tienda_universitaria.services.mapper.ICustomerMapper;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
