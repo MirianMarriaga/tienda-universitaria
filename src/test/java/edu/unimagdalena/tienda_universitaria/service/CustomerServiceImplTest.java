@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -130,22 +131,22 @@ public class CustomerServiceImplTest {
 
     @Test
     void shouldListAllCustomers() {
-        var entity = Customer.builder()
-                .email("jahernandez@unimagdalena.edu.co")
-                .fullName("Juan Amador Hernandez")
-                .identificationNumber("1001234567")
-                .phone("+57 310 456 7821")
-                .status(CustomerStatus.ACTIVE)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .build();
+        var page = new PageImpl<>(java.util.List.of(
+                Customer.builder()
+                        .email("jahernandez@unimagdalena.edu.co")
+                        .fullName("Juan Amador Hernandez")
+                        .identificationNumber("1001234567")
+                        .phone("+57 310 456 7821")
+                        .status(CustomerStatus.ACTIVE)
+                        .createdAt(Instant.now())
+                        .updatedAt(Instant.now())
+                        .build()
+        ));
+        when(customerRepo.findAll(PageRequest.of(0, 5))).thenReturn(page);
 
-        when(customerRepo.findAll()).thenReturn(List.of(entity));
-
-        var result = service.list();
-
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).email()).isEqualTo("jahernandez@unimagdalena.edu.co");
+        var result = service.list(PageRequest.of(0, 5));
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().get(0).email()).isEqualTo("jahernandez@unimagdalena.edu.co");
     }
 
     @Test

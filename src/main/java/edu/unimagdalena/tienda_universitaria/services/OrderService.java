@@ -3,6 +3,8 @@ package edu.unimagdalena.tienda_universitaria.services;
 import edu.unimagdalena.tienda_universitaria.api.dto.OrderDtos.*;
 import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,7 +18,7 @@ public interface OrderService {
     OrderResponse cancel(Long id);
     OrderResponse ship(Long id);
     OrderResponse deliver(Long id);
-    List<OrderResponse> list();
+    Page<OrderResponse> list(Pageable pageable);
 
     List<OrderResponse> findByCustomerId(Long customerId);
     List<OrderResponse> findByStatus(OrderStatus status);
