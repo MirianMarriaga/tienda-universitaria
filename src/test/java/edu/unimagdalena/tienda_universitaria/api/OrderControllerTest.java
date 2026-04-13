@@ -121,6 +121,16 @@ public class OrderControllerTest {
     }
 
     @Test
+    void ship_shouldReturn400WhenNotPaid() throws Exception {
+        when(service.ship(1L))
+                .thenThrow(new BusinessException("only paid orders can be shipped"));
+
+        mvc.perform(put("/api/orders/1/ship"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("only paid orders can be shipped"));
+    }
+
+    @Test
     void deliver_shouldReturn200() throws Exception {
         var resp = new OrderResponse(1L, 1L, 1L, OrderStatus.DELIVERED,
                 BigDecimal.valueOf(15000), List.of(), Instant.now(), Instant.now());
@@ -152,5 +162,15 @@ public class OrderControllerTest {
         mvc.perform(put("/api/orders/1/cancel"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("shipped orders can't be cancelled"));
+    }
+
+    @Test
+    void cancel_shouldReturn400WhenDelivered() throws Exception {
+        when(service.cancel(1L))
+                .thenThrow(new BusinessException("delivered orders can't be cancelled"));
+
+        mvc.perform(put("/api/orders/1/cancel"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("delivered orders can't be cancelled"));
     }
 }
