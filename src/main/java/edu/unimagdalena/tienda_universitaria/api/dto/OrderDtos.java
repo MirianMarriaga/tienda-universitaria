@@ -19,7 +19,7 @@ public class OrderDtos {
     public record OrderCreateRequest(
             @NotNull @Positive Long customerId,
             @NotNull @Positive Long addressId,
-            @NotEmpty @Valid List<OrderCreateItemRequest> items
+            @Valid List<OrderCreateItemRequest> items
     ) implements Serializable {}
 
     public record OrderCancelRequest(
