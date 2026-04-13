@@ -28,12 +28,6 @@ public class CustomerServiceImpl implements CustomerService{
     @Transactional
     @Override public CustomerResponse create(CustomerCreateRequest req) {
 
-        if (req.email() == null || req.email().isBlank())
-            throw new ValidationException("Email is required");
-
-        if (req.identificationNumber() == null || req.identificationNumber().isBlank())
-            throw new ValidationException("Identification number is required");
-
         var customerEntity = mapper.toEntity(req);
         customerEntity.setStatus(CustomerStatus.ACTIVE);
         customerEntity.setCreatedAt(Instant.now());

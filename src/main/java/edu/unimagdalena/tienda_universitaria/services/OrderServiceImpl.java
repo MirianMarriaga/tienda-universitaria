@@ -36,12 +36,6 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponse create(OrderCreateRequest req) {
 
-        if (req.items() == null || req.items().isEmpty())
-            throw new ValidationException("The order must have at least one item");
-
-        if (req.items().stream().anyMatch(i->i.quantity() <= 0))
-            throw new ValidationException("all quantities must be greater than zero");
-
         var customer = customerRepo.findById(req.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer %d not found".formatted(req.customerId())));
 

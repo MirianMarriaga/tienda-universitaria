@@ -1,6 +1,8 @@
 package edu.unimagdalena.tienda_universitaria.api.dto;
 
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,14 +12,14 @@ import java.util.List;
 public class OrderDtos {
 
     public record OrderCreateItemRequest(
-            Long productId,
-            Integer quantity
+            @NotNull @Positive Long productId,
+            @NotNull @Min(1) Integer quantity
     ) implements Serializable {}
 
     public record OrderCreateRequest(
-            Long customerId,
-            Long addressId,
-            List<OrderCreateItemRequest> items
+            @NotNull @Positive Long customerId,
+            @NotNull @Positive Long addressId,
+            @NotEmpty @Valid List<OrderCreateItemRequest> items
     ) implements Serializable {}
 
     public record OrderCancelRequest(
