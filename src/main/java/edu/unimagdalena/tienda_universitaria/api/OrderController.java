@@ -15,15 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 @Validated
 public class OrderController {
-    /*
-- [x ]  `POST /api/orders` — crear pedido
-- [x ]  `GET /api/orders/{id}` — obtener pedido por id
-- [x ]  `GET /api/orders` — listar todos los pedidos
-- [ ]  `PUT /api/orders/{id}/pay` — pagar pedido
-- [ ]  `PUT /api/orders/{id}/ship` — enviar pedido
-- [ ]  `PUT /api/orders/{id}/deliver` — marcar como entregado
-- [ ]  `PUT /api/orders/{id}/cancel` — cancelar pedido
-     */
 
     private final OrderService service;
 
@@ -41,8 +32,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponse>> list(@RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<OrderResponse>> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         var p = service.list(PageRequest.of(page, size, Sort.by("createdAt").descending()));
         return ResponseEntity.ok(p);
     }
