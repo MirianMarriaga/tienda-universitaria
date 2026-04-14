@@ -24,14 +24,10 @@ public class InventoryServiceImpl implements InventoryService{
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product %d".formatted(productId)));
 
         if (req.availableStock() != null) {
-            if (req.availableStock() < 0)
-                throw new ValidationException("Available stock cannot be negative");
             inventory.setAvailableStock(req.availableStock());
         }
 
         if (req.minimumStock() != null) {
-            if (req.minimumStock() < 0)
-                throw new ValidationException("Minimum stock cannot be negative");
             inventory.setMinimumStock(req.minimumStock());
         }
 
@@ -46,7 +42,8 @@ public class InventoryServiceImpl implements InventoryService{
                 saved.getAvailableStock(),
                 saved.getMinimumStock(),
                 saved.getUpdatedAt()
-        );    }
+        );
+    }
 
     @Transactional(readOnly = true)
     @Override

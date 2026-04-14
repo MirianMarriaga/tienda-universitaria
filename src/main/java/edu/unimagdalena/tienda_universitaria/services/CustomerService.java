@@ -14,7 +14,7 @@ public interface CustomerService {
     CustomerResponse get(Long id);
     CustomerResponse update(Long id, CustomerUpdateRequest req);
     void deactivate(Long id);
-    List<CustomerResponse> list();
+    Page<CustomerResponse> list(Pageable pageable);
     CustomerResponse findByEmail(String email);
     CustomerResponse findByIdentificationNumber(String identificationNumber);
     List<CustomerResponse> findByStatus(CustomerStatus status);

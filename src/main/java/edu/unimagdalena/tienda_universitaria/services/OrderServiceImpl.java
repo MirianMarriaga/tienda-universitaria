@@ -12,6 +12,8 @@ import edu.unimagdalena.tienda_universitaria.services.mapper.IOrderMapper;
 import edu.unimagdalena.tienda_universitaria.exception.*;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService{
-    private final OrderRepository OrderRepo;
+    private final OrderRepository orderRepo;
     private final CustomerRepository customerRepo;
     private final AddressRepository addressRepo;
     private final ProductRepository productRepo;
@@ -37,10 +39,7 @@ public class OrderServiceImpl implements OrderService{
     public OrderResponse create(OrderCreateRequest req) {
 
         if (req.items() == null || req.items().isEmpty())
-            throw new ValidationException("The order must have at least one item");
-
-        if (req.items().stream().anyMatch(i->i.quantity() <= 0))
-            throw new ValidationException("all quantities must be greater than zero");
+            throw new ValidationException("the order must have at least one item");
 
         var customer = customerRepo.findById(req.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer %d not found".formatted(req.customerId())));
@@ -62,7 +61,7 @@ public class OrderServiceImpl implements OrderService{
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
-        var savedOrder = OrderRepo.save(order);
+        var savedOrder = orderRepo.save(order);
 
 
         List<OrderItem> items = req.items().stream().map(i -> {
@@ -89,7 +88,7 @@ public class OrderServiceImpl implements OrderService{
 
         savedOrder.setTotal(total);
         savedOrder.setItems(items);
-        var finalOrder = OrderRepo.save(savedOrder);
+        var finalOrder = orderRepo.save(savedOrder);
 
         historyRepo.save(OrderStatusHistory.builder()
                 .order(finalOrder)
@@ -102,14 +101,14 @@ public class OrderServiceImpl implements OrderService{
 
     @Override @Transactional(readOnly = true)
     public OrderResponse get(Long id) {
-        return OrderRepo.findById(id).map(o-> mapper.toResponse(o))
+        return orderRepo.findById(id).map(o-> mapper.toResponse(o))
                 .orElseThrow(()-> new ResourceNotFoundException("Order %d not found".formatted(id)));
     }
 
     @Transactional
     @Override
     public OrderResponse pay(Long id) {
-        var order = OrderRepo.findById(id)
+        var order = orderRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if(order.getStatus() != OrderStatus.CREATED)
@@ -131,7 +130,7 @@ public class OrderServiceImpl implements OrderService{
 
         order.setStatus(OrderStatus.PAID);
         order.setUpdatedAt(Instant.now());
-        var savedOrder = OrderRepo.save(order);
+        var savedOrder = orderRepo.save(order);
 
         historyRepo.save(OrderStatusHistory.builder()
                 .order(savedOrder)
@@ -145,7 +144,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     @Override
     public OrderResponse cancel(Long id) {
-        var order = OrderRepo.findById(id)
+        var order = orderRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if (order.getStatus() == OrderStatus.SHIPPED)
@@ -164,7 +163,7 @@ public class OrderServiceImpl implements OrderService{
 
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(Instant.now());
-        var savedOrder = OrderRepo.save(order);
+        var savedOrder = orderRepo.save(order);
 
         historyRepo.save(OrderStatusHistory.builder().
                 order(savedOrder)
@@ -178,7 +177,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     @Override
     public OrderResponse ship(Long id) {
-        var order = OrderRepo.findById(id)
+        var order = orderRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(("Order %d not found".formatted(id))));
 
         if (order.getStatus() != OrderStatus.PAID)
@@ -186,7 +185,7 @@ public class OrderServiceImpl implements OrderService{
 
         order.setStatus(OrderStatus.SHIPPED);
         order.setUpdatedAt(Instant.now());
-        var saved = OrderRepo.save(order);
+        var saved = orderRepo.save(order);
 
         historyRepo.save(OrderStatusHistory.builder()
                 .order(order)
@@ -200,7 +199,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     @Override
     public OrderResponse deliver(Long id) {
-        var order = OrderRepo.findById(id)
+        var order = orderRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order %d not found".formatted(id)));
 
         if (order.getStatus() != OrderStatus.SHIPPED)
@@ -208,7 +207,7 @@ public class OrderServiceImpl implements OrderService{
 
         order.setStatus(OrderStatus.DELIVERED);
         order.setUpdatedAt(Instant.now());
-        var saved = OrderRepo.save(order);
+        var saved = orderRepo.save(order);
 
         historyRepo.save(OrderStatusHistory.builder()
                 .order(saved)
@@ -221,14 +220,14 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderResponse> list() {
-        return OrderRepo.findAll().stream().map(o-> mapper.toResponse(o)).toList();
+    public Page<OrderResponse> list(Pageable pageable) {
+        return orderRepo.findAll(pageable).map(o-> mapper.toResponse(o));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> findByCustomerId(Long customerId) {
-        return OrderRepo.findByCustomer_Id(customerId).stream()
+        return orderRepo.findByCustomer_Id(customerId).stream()
                 .map(o-> mapper.toResponse(o))
                 .toList();
     }
@@ -236,7 +235,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> findByStatus(OrderStatus status) {
-        return OrderRepo.findByStatus(status).stream()
+        return orderRepo.findByStatus(status).stream()
                 .map(o -> mapper.toResponse(o))
                 .toList();
     }
@@ -244,7 +243,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> findByFilters(Long customerId, OrderStatus status, Instant startDate, Instant endDate, BigDecimal minTotal, BigDecimal maxTotal) {
-        return OrderRepo.findOrdersByFilters(customerId, status, startDate, endDate, minTotal, maxTotal)
+        return orderRepo.findOrdersByFilters(customerId, status, startDate, endDate, minTotal, maxTotal)
                 .stream().map(o -> mapper.toResponse(o)).toList();
     }
 }

@@ -1,9 +1,8 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.CategoryDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Category;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
-import edu.unimagdalena.tienda_universitaria.services.CategoryServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.ICategoryMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

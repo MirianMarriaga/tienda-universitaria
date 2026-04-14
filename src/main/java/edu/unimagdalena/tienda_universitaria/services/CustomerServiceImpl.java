@@ -11,6 +11,8 @@ import edu.unimagdalena.tienda_universitaria.services.mapper.ICustomerMapper;
 import edu.unimagdalena.tienda_universitaria.exception.*;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +27,9 @@ public class CustomerServiceImpl implements CustomerService{
     private final ICustomerMapper mapper;
     private final OrderRepository orderRepo;
 
+    @Override
     @Transactional
-    @Override public CustomerResponse create(CustomerCreateRequest req) {
-
-        if (req.email() == null || req.email().isBlank())
-            throw new ValidationException("Email is required");
-
-        if (req.identificationNumber() == null || req.identificationNumber().isBlank())
-            throw new ValidationException("Identification number is required");
-
+    public CustomerResponse create(CustomerCreateRequest req) {
         var customerEntity = mapper.toEntity(req);
         customerEntity.setStatus(CustomerStatus.ACTIVE);
         customerEntity.setCreatedAt(Instant.now());
@@ -49,7 +45,8 @@ public class CustomerServiceImpl implements CustomerService{
                 .orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(id)));
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public CustomerResponse update(Long id, CustomerUpdateRequest req) {
         var c = repo.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Customer %d not found".formatted(id)));
@@ -75,9 +72,10 @@ public class CustomerServiceImpl implements CustomerService{
         repo.save(c);
     }
 
-    @Override @Transactional(readOnly = true)
-    public List<CustomerResponse> list() {
-        return repo.findAll().stream().map(c-> mapper.toResponse(c)).toList();
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CustomerResponse> list(Pageable pageable) {
+        return repo.findAll(pageable).map(c-> mapper.toResponse(c));
     }
 
     @Override @Transactional(readOnly = true)

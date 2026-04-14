@@ -1,4 +1,4 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Category;
@@ -9,7 +9,6 @@ import edu.unimagdalena.tienda_universitaria.exception.ValidationException;
 import edu.unimagdalena.tienda_universitaria.repositories.CategoryRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
-import edu.unimagdalena.tienda_universitaria.services.ProductServiceImpl;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IProductMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

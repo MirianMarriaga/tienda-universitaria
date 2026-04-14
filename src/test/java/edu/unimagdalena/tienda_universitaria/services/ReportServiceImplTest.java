@@ -1,11 +1,9 @@
-package edu.unimagdalena.tienda_universitaria.service;
+package edu.unimagdalena.tienda_universitaria.services;
 
-import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Order;
 import edu.unimagdalena.tienda_universitaria.entities.OrderStatusHistory;
 import edu.unimagdalena.tienda_universitaria.entities.enums.OrderStatus;
 import edu.unimagdalena.tienda_universitaria.repositories.*;
-import edu.unimagdalena.tienda_universitaria.services.ReportServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
