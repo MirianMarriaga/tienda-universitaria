@@ -5,6 +5,7 @@ import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
 import edu.unimagdalena.tienda_universitaria.services.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
+@Validated
 public class ReportController {
 
     private final ReportService service;
