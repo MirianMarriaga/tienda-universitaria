@@ -1,0 +1,41 @@
+[33m2006225[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mservice[m[33m)[m HEAD@{0}: checkout: moving from origin/security to service
+[33m8c3d72a[m[33m ([m[1;31morigin/controller[m[33m, [m[1;32morigin/security[m[33m, [m[1;32mcontroller[m[33m)[m HEAD@{1}: checkout: moving from controller to origin/security
+[33m8c3d72a[m[33m ([m[1;31morigin/controller[m[33m, [m[1;32morigin/security[m[33m, [m[1;32mcontroller[m[33m)[m HEAD@{2}: commit: fix
+[33mb9d35db[m HEAD@{3}: commit: feat: agregar controladores: Address, Category, Product, Report
+[33m5e2a1e9[m HEAD@{4}: pull origin controller: Fast-forward
+[33mb96752f[m HEAD@{5}: checkout: moving from service to controller
+[33m2006225[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mservice[m[33m)[m HEAD@{6}: commit: fix: se agregaron excepciones
+[33m334164c[m HEAD@{7}: commit: fix: terminar exception
+[33mad7db6d[m[33m ([m[1;33mtag: [m[1;33mv1.0.0[m[33m)[m HEAD@{8}: commit: fix: agregar find sku al service
+[33m9f0b65c[m HEAD@{9}: pull origin service: Merge made by the 'ort' strategy.
+[33m139bab8[m HEAD@{10}: commit: feat: agregar los test y service faltantes
+[33mbac5c78[m HEAD@{11}: commit: Agregar exception
+[33me2fcc41[m HEAD@{12}: pull origin service: Fast-forward
+[33m9197304[m HEAD@{13}: commit: fix: ignorar
+[33mdca3cd1[m HEAD@{14}: commit (merge): fix: ignorar, resolucion de errores
+[33mbf00a92[m HEAD@{15}: commit: fix: agregar find historial y algunos service
+[33m140e29a[m HEAD@{16}: pull origin service: Merge made by the 'ort' strategy.
+[33m27507f0[m HEAD@{17}: commit: fix
+[33mba37218[m HEAD@{18}: checkout: moving from repository to service
+[33m6ddcc2e[m[33m ([m[1;32mrepository[m[33m)[m HEAD@{19}: pull origin service: Merge made by the 'ort' strategy.
+[33mb41024f[m HEAD@{20}: commit: fix
+[33m1cd7e31[m HEAD@{21}: checkout: moving from service to repository
+[33mba37218[m HEAD@{22}: pull origin service: Fast-forward
+[33m8f36f3d[m HEAD@{23}: checkout: moving from repository to service
+[33m1cd7e31[m HEAD@{24}: commit: fix
+[33mdc29931[m HEAD@{25}: checkout: moving from service to repository
+[33m8f36f3d[m HEAD@{26}: commit (merge): se me olvidó hacer el pull antes :D
+[33mf8e32b3[m HEAD@{27}: reset: moving to HEAD
+[33mf8e32b3[m HEAD@{28}: reset: moving to HEAD
+[33mf8e32b3[m HEAD@{29}: commit: feat: agregué los dtos, me di cuenta que me faltó algo en los repositorios cuando rectificaba
+[33m08877e2[m HEAD@{30}: checkout: moving from repository to service
+[33mdc29931[m HEAD@{31}: commit (merge): fix: version final final test repositorios, se supone que ya estan todos organizados
+[33m96e1c04[m HEAD@{32}: commit: fix: el resto de test antes de hacer pull, dice que tengo que hacer el add primero
+[33m5160706[m HEAD@{33}: commit: fix: se me fue una coma en una colsulta, ya estoy haciendo los test :D
+[33m89ff36c[m HEAD@{34}: commit (merge): we are charlie kirk feat: combine las consultas que tenias con las q hice
+[33ma822d05[m HEAD@{35}: commit: we are charlie kirk feat:add repository
+[33m3c74835[m HEAD@{36}: checkout: moving from main to repository
+[33m296c917[m[33m ([m[1;32mmain[m[33m)[m HEAD@{37}: checkout: moving from repository to main
+[33m3c74835[m HEAD@{38}: checkout: moving from repository to repository
+[33m3c74835[m HEAD@{39}: checkout: moving from main to repository
+[33m296c917[m[33m ([m[1;32mmain[m[33m)[m HEAD@{40}: clone: from https://github.com/MirianMarriaga/tienda-universitaria.git
