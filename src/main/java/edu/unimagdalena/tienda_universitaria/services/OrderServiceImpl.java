@@ -77,6 +77,7 @@ public class OrderServiceImpl implements OrderService{
                     .quantity(i.quantity())
                     .unitPrice(unitPrice)
                     .subtotal(subtotal)
+                    .createdAt(Instant.now())
                     .build();
         }).toList();
 
