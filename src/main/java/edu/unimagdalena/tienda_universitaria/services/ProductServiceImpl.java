@@ -1,6 +1,7 @@
 package edu.unimagdalena.tienda_universitaria.services;
 
-
+import edu.unimagdalena.tienda_universitaria.entities.Inventory;
+import edu.unimagdalena.tienda_universitaria.repositories.InventoryRepository;
 import edu.unimagdalena.tienda_universitaria.api.dto.ProductDtos.*;
 import edu.unimagdalena.tienda_universitaria.api.dto.ReportDtos.*;
 import edu.unimagdalena.tienda_universitaria.entities.Product;
@@ -14,7 +15,6 @@ import edu.unimagdalena.tienda_universitaria.repositories.OrderRepository;
 import edu.unimagdalena.tienda_universitaria.repositories.ProductRepository;
 import edu.unimagdalena.tienda_universitaria.services.mapper.IProductMapper;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
     private final OrderRepository orderRepo;
+    private final InventoryRepository inventoryRepo;
     private final IProductMapper mapper;
 
     @Override
@@ -59,7 +60,16 @@ public class ProductServiceImpl implements ProductService {
         product.setActive(true);
         product.setCreatedAt(Instant.now());
         product.setUpdatedAt(Instant.now());
-        var saved =  productRepo.save(product);
+
+        var saved = productRepo.save(product);
+
+        var inventory = new Inventory();
+        inventory.setProduct(saved);
+        inventory.setAvailableStock(0);
+        inventory.setMinimumStock(0);
+        inventory.setUpdatedAt(Instant.now());
+        inventoryRepo.save(inventory);
+
         return mapper.toResponse(saved);
 
 
