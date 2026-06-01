@@ -7,7 +7,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface ICustomerMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", ignore = true)
+    //@Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Customer toEntity(CustomerCreateRequest req);
