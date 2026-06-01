@@ -50,4 +50,9 @@ public class ProductController {
         return ResponseEntity.ok(inventoryService.update(id, req));
     }
 
+    @GetMapping("/{id}/inventory")
+    public ResponseEntity<InventoryResponse> getInventory(@PathVariable Long id) {
+        return ResponseEntity.ok(inventoryService.getByProductId(id));
+    }
+
 }

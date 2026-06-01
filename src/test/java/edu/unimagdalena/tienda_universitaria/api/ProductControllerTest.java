@@ -131,4 +131,17 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.availableStock").value(50));
     }
 
+    @Test
+    void getInventory_shouldReturn200() throws Exception {
+        var resp = new InventoryResponse(1L, 1L, 50, 10, Instant.now());
+
+        when(inventoryService.getByProductId(1L)).thenReturn(resp);
+
+        mvc.perform(get("/api/products/1/inventory"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.productId").value(1))
+                .andExpect(jsonPath("$.availableStock").value(50))
+                .andExpect(jsonPath("$.minimumStock").value(10));
+    }
+
 }
