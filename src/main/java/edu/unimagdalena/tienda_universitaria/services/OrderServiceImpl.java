@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,7 +64,6 @@ public class OrderServiceImpl implements OrderService{
                 .build();
         var savedOrder = orderRepo.save(order);
 
-
         List<OrderItem> items = req.items().stream().map(i -> {
             var product = productRepo.findById(i.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product %d not found".formatted(i.productId())));
@@ -88,7 +88,9 @@ public class OrderServiceImpl implements OrderService{
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         savedOrder.setTotal(total);
-        savedOrder.setItems(items);
+
+        savedOrder.setItems(new ArrayList<>(items));
+
         var finalOrder = orderRepo.save(savedOrder);
 
         historyRepo.save(OrderStatusHistory.builder()
